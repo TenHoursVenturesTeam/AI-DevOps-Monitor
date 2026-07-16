@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.*
+build/
+__pycache__/
+*.pyc
+model.pkl
+.DS_Store
+*.log
+*.pem
+*.key
+.vscode/
+.idea/

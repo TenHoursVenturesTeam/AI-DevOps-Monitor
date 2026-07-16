@@ -1,0 +1,1 @@
+// This file was misplaced. Authentication middleware has been moved to backend/middleware/auth.js
