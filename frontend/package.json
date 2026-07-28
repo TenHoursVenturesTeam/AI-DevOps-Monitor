@@ -2,7 +2,7 @@
   "name": "ai-devops-monitor",
   "version": "1.0.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "https://TenHoursVenturesTeam.github.io/AI-DevOps-Monitor",
   "dependencies": {
     "lucide-react": "^0.294.0",
     "react": "^18.2.0",
