@@ -49,7 +49,7 @@ These savings are computed from real container states, not estimates.
 
 ## 📈 Performance Analytics
 
-![Performance](screenshots/ 04-performance.png)
+![Performance](screenshots/04-performance.png)
 
 Real-time performance tracking:
 - **CPU & Memory Over Time** — Live chart updated every 30 seconds
