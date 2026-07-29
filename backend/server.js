@@ -60,10 +60,10 @@ const limiter = rateLimit({
   message: { message: 'Too many requests from this IP, please try again after 15 minutes.' }
 });
 
-// Strict Limiter for Auth: Brute-force se bachne ke liye sirf 5 attempts
+// Strict Limiter for Auth: Brute-force se bachne ke liye
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20, // Increased from 5 to 20 for better dev experience
+  max: 50, // Generous for development
   message: { success: false, message: 'Too many login attempts, please try again after 15 minutes.' },
   skip: (req) => req.method === 'OPTIONS' // Skip preflight requests
 });

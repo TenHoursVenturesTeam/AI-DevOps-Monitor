@@ -2,6 +2,10 @@
 
 > Predict Docker container crashes **5-10 minutes early** using Machine Learning
 
+## 📸 [See Live Demo Screenshots →](DEMO.md)
+
+> Real screenshots from monitoring 28 Docker containers in production. See the dashboard, security scanner, cost optimizer, and performance analytics in action.
+
 ## 🖥️ Features
 
 - 📊 Real-time container monitoring (CPU, Memory, Health)

@@ -77,10 +77,10 @@ export default function Dashboard({ user, onNavigate }) {
           fetch(`${API_BASE}/security/scan`, { headers }),
         ]);
 
-        const containersData = await containersRes.json();
-        const alertsData = await alertsRes.json();
-        const costMetrics = await costRes.json();
-        const securityData = await securityRes.json();
+        const containersData = containersRes.ok ? await containersRes.json() : [];
+        const alertsData = alertsRes.ok ? await alertsRes.json() : [];
+        const costMetrics = costRes.ok ? await costRes.json() : {};
+        const securityData = securityRes.ok ? await securityRes.json() : {};
 
         if (Array.isArray(containersData)) setContainers(containersData);
         if (Array.isArray(alertsData)) setAlerts(alertsData);
