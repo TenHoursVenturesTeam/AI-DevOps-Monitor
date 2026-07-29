@@ -2,65 +2,112 @@
 
 > Predict Docker container crashes **5-10 minutes early** using Machine Learning
 
-[![Live Demo](https://img.shields.io/badge/Live-GitHub%20Pages-cyan)](https://YOUR_USERNAME.github.io/ai-devops-monitor)
+## 🖥️ Features
 
-## 🖥️ Dashboard Preview
-
-- 📊 Real-time container monitoring
+- 📊 Real-time container monitoring (CPU, Memory, Health)
 - 🤖 AI crash prediction (scikit-learn)
-- ⚡ One-click auto-restart
+- ⚡ One-click container restart (Admin only)
+- 🛡️ Security scanner (root users, privileged containers, exposed ports)
 - 💰 Cost optimization reports
-- 🛡️ Security issue scanner
-- 🔔 Crash alerts
+- 🔔 Automated crash alerts
+- 📧 Email reports via SMTP
+- 🔐 JWT authentication with role-based access
 
 ## 🚀 Quick Start
 
-### Option 1: Frontend Only (GitHub Pages)
-```bash
-cd frontend
-npm install
-npm start          # localhost:3001
-npm run deploy     # → GitHub Pages
-```
+### Prerequisites
+- **Node.js** v18+
+- **Docker Desktop** running
+- **Python 3.9+** (optional, for AI predictions)
 
-### Option 2: Full Stack (Local)
+### 1. Backend
 ```bash
-# Terminal 1 - Backend
 cd backend
 npm install
-npm start          # localhost:3000
+cp .env.example .env     # Edit with your settings
+npm start                # http://localhost:5003
+```
 
-# Terminal 2 - AI Server
-cd ai
-pip install -r requirements.txt
-python train_model.py   # Train model first
-python predict_server.py  # localhost:5001
-
-# Terminal 3 - Frontend
+### 2. Frontend
+```bash
 cd frontend
 npm install
-npm start          # localhost:3001
+npm start                # http://localhost:3001
 ```
 
-## 📁 Structure
+### 3. AI Server (Optional)
+```bash
+cd ai
+pip install -r requirements.txt
+python train_model.py       # Train model once
+python predict_server.py    # http://localhost:5001
+```
+
+## 📁 Project Structure
 ```
 ai-devops-monitor/
-├── frontend/         React + Tailwind (GitHub Pages)
-├── backend/          Node.js + Express (localhost:3000)
-└── ai/               Python scikit-learn (localhost:5001)
+├── frontend/         React + Tailwind CSS (Dashboard UI)
+├── backend/          Node.js + Express (API Server)
+│   ├── routes/       API endpoints (docker, metrics, auth, security, alerts, reports)
+│   ├── data/         Local JSON storage (auto-created, no DB needed)
+│   └── store.js      File-based storage engine
+└── ai/               Python + scikit-learn (Crash prediction)
 ```
 
-## 💰 Pricing
-| Plan | Price | Containers |
-|------|-------|-----------|
-| Free Trial | ₹0 (14 days) | 5 |
-| Starter | ₹5,000/mo | 20 |
-| Professional | ₹10,000/mo | 100 |
-| Enterprise | ₹25,000/mo | Unlimited |
-
 ## 🛠️ Tech Stack
-- **Frontend**: React.js, Tailwind CSS, Recharts
-- **Backend**: Node.js, Express.js, Dockerode
-- **AI/ML**: Python, scikit-learn, Flask
-- **Database**: MongoDB (optional)
-- **Deploy**: GitHub Pages (frontend), Render.com (backend)
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React.js, Tailwind CSS, Recharts |
+| Backend | Node.js, Express.js, Dockerode |
+| AI/ML | Python, scikit-learn, Flask |
+| Storage | File-based JSON (no database required) |
+| Auth | JWT + bcrypt |
+| Security | Helmet, CORS, Rate Limiting |
+
+## ⚙️ Environment Variables
+
+Copy `backend/.env.example` to `backend/.env` and configure:
+
+```env
+PORT=5003
+JWT_SECRET=your_secret_here
+CORS_ORIGINS=http://localhost:3001
+AI_API_KEY=your_ai_key
+INTERNAL_SECRET=your_internal_secret
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
+SMTP_FROM="AI DevOps Monitor <your_email@gmail.com>"
+```
+
+## 🔐 Security Features
+
+- JWT token authentication
+- bcrypt password hashing (12 salt rounds)
+- Role-based access control (admin/viewer)
+- Rate limiting on all endpoints
+- Helmet security headers
+- CORS origin whitelist
+- Input validation on all routes
+- Audit logging for sensitive actions
+- No hardcoded secrets
+
+## 📊 How It Works
+
+1. Backend connects to Docker via local socket and collects container metrics
+2. Metrics are analyzed using threshold-based rules (or ML model if AI server is running)
+3. Frontend displays real-time stats, predictions, and security findings
+4. Cron job monitors containers every 30 seconds and creates alerts for crashed containers
+
+## 🧪 Running Tests
+
+```bash
+cd backend
+npm test
+```
+
+## 📝 License
+
+MIT

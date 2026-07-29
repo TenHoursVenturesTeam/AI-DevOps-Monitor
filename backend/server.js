@@ -1,10 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
 const cron = require('node-cron');
 const cookieParser = require('cookie-parser');
-const dockerRoutes = require('./routes/docker'); // Assuming dockerRoutes is defined
+const dockerRoutes = require('./routes/docker');
 const metricsRoutes = require('./routes/metrics');
 const alertsRoutes = require('./routes/alerts');
 const { publicAuthRouter, protectedAuthRouter } = require('./routes/auth');
@@ -136,37 +135,11 @@ if (process.env.NODE_ENV !== 'test') {
   });
 }
 
-async function startServer() {
-  try {
-    const mongoURI =
-      process.env.MONGO_URI ||
-      'mongodb://127.0.0.1:27017/ai-devops-monitor';
-
-    await mongoose.connect(mongoURI, {
-      serverSelectionTimeoutMS: 10000
-    });
-	 
-    console.log('Connected DB:', mongoose.connection.name);
-
-    const collections =
-    await mongoose.connection.db
-      .listCollections()
-    .toArray();
-
-    console.log(
-      'Collections:',
-      collections.map(c => c.name)
-    );
-
-    console.log('✅ MongoDB connected successfully');
-
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 API Server: http://127.0.0.1:${PORT}`);
-    });
-  } catch (err) {
-    console.error('❌ MongoDB Connection Failed:', err.message);
-    process.exit(1);
-  }
+function startServer() {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 API Server: http://127.0.0.1:${PORT}`);
+    console.log('💾 Using file-based storage (no database required)');
+  });
 }
 
 if (require.main === module) {

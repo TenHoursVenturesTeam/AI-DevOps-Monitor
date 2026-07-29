@@ -3,7 +3,7 @@ const router = express.Router();
 const Docker = require('dockerode');
 const nodemailer = require('nodemailer');
 const { authMiddleware } = require('./auth');
-const User = require('../User');
+const { UserStore } = require('../store');
 const AuditLog = require('../AuditLog');
 
 const docker = new Docker({ socketPath: process.platform === 'win32' ? '//./pipe/docker_engine' : '/var/run/docker.sock' });
@@ -89,7 +89,7 @@ router.post('/send', authMiddleware, async (req, res) => {
       if (process.env.NODE_ENV === 'test') {
         targetUser = { id: req.body.userId, name: 'Test User', email: 'user@test.com', role: 'viewer' };
       } else {
-        targetUser = await User.findById(req.body.userId);
+        targetUser = UserStore.findById(req.body.userId);
         if (!targetUser) {
           return res.status(404).json({ success: false, message: 'Target user not found' });
         }
@@ -99,7 +99,7 @@ router.post('/send', authMiddleware, async (req, res) => {
         targetUser = { name: 'Test Operator', email: req.user.email, role: req.user.role };
       } else {
         // Find current user's DB entry to get their display name
-        targetUser = await User.findOne({ email: req.user.email });
+        targetUser = UserStore.findOne({ email: req.user.email });
         if (!targetUser) {
           // Fallback for tests or missing records
           targetUser = {
@@ -587,7 +587,7 @@ router.post('/send', authMiddleware, async (req, res) => {
 
     // Save AuditLog
     if (process.env.NODE_ENV !== 'test') {
-      await new AuditLog({
+      new AuditLog({
         userEmail: req.user.email,
         action: req.user.role === 'admin' && req.body.userId ? `Send Usage Report to User` : `Request Usage Report`,
         target: targetUser.email,

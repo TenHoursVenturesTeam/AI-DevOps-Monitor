@@ -11,3 +11,4 @@ model.pkl
 *.key
 .vscode/
 .idea/
+backend/data/

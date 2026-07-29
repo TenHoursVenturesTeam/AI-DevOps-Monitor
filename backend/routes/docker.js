@@ -73,7 +73,7 @@ router.post('/restart/:id', authMiddleware, async (req, res) => {
     const container = docker.getContainer(req.params.id);
     await container.restart();
 
-    await new AuditLog({
+    new AuditLog({
       userEmail: req.user.email,
       action: 'Restart Container',
       target: req.params.id,
@@ -98,7 +98,7 @@ router.post('/stop/:id', authMiddleware, async (req, res) => {
     const container = docker.getContainer(req.params.id);
     await container.stop();
 
-    await new AuditLog({
+    new AuditLog({
       userEmail: req.user.email,
       action: 'Stop Container',
       target: req.params.id,

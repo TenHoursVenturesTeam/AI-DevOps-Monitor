@@ -1,18 +1,39 @@
-const mongoose = require('mongoose');
+const { UserStore } = require('./store');
 
-const UserSchema = new mongoose.Schema({
-  name: { type: String, required: true, trim: true, maxlength: 100 },
-  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-  password: { type: String, required: true, select: false },
-  role: { type: String, enum: ['viewer', 'admin'], default: 'viewer' },
-  createdAt: { type: Date, default: Date.now }
-});
+// File-based User model (no MongoDB required)
+// API mimics Mongoose methods so routes don't need major changes
+const User = {
+  findOne(query) {
+    const user = UserStore.findOne(query);
+    // Support .select('+password') chain
+    return {
+      ...user,
+      select(fields) {
+        if (fields === '+password') return user;
+        if (fields === '-password' && user) {
+          const { password, ...rest } = user;
+          return rest;
+        }
+        return user;
+      }
+    };
+  },
 
-// Never return password in JSON responses
-UserSchema.methods.toJSON = function () {
-  const user = this.toObject();
-  delete user.password;
-  return user;
+  findById(id) {
+    return UserStore.findById(id);
+  },
+
+  find() {
+    return {
+      select(fields) {
+        return UserStore.find(); // Already excludes password
+      }
+    };
+  },
+
+  async save(userData) {
+    return UserStore.create(userData);
+  }
 };
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = User;

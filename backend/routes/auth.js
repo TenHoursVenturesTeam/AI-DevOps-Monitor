@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../User'); // Assuming User model is defined
+const { UserStore } = require('../store');
 const AuditLog = require('../AuditLog');
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -77,15 +77,14 @@ publicAuthRouter.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Invalid role. Allowed: admin, viewer' });
     }
 
-    let user = await User.findOne({ email });
+    let user = UserStore.findOne({ email });
     if (user) return res.status(400).json({ message: 'User already exists' });
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    user = new User({ name, email, password: hashedPassword, role: role || 'viewer' });
-    await user.save();
+    user = UserStore.create({ name, email, password: hashedPassword, role: role || 'viewer' });
 
     if (process.env.NODE_ENV !== 'test') {
-      await new AuditLog({
+      new AuditLog({
         userEmail: email,
         action: 'User Registration',
         target: 'Auth System',
@@ -109,7 +108,7 @@ publicAuthRouter.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    const user = await User.findOne({ email }).select('+password');
+    const user = UserStore.findOne({ email });
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -118,7 +117,7 @@ publicAuthRouter.post('/login', async (req, res) => {
     const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, EFFECTIVE_JWT_SECRET, { expiresIn: '1d' });
 
     if (process.env.NODE_ENV !== 'test') {
-      await new AuditLog({
+      new AuditLog({
         userEmail: user.email,
         action: 'User Login',
         target: 'Auth System',
@@ -142,7 +141,7 @@ protectedAuthRouter.use(authMiddleware);
 protectedAuthRouter.get('/users', async (req, res) => {
   if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admins only' });
 
-  const users = await User.find().select('-password');
+  const users = UserStore.find();
   res.json(users);
 });
 

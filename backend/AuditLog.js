@@ -1,11 +1,19 @@
-const mongoose = require('mongoose');
+const { AuditStore } = require('./store');
 
-const AuditLogSchema = new mongoose.Schema({
-  timestamp: { type: Date, default: Date.now },
-  userEmail: { type: String, required: true },
-  action: { type: String, required: true },
-  target: { type: String, default: 'N/A' },
-  ip: { type: String, required: true }
-});
+// File-based AuditLog (no MongoDB required)
+// Constructor pattern mimics Mongoose: new AuditLog({...}).save()
+class AuditLog {
+  constructor(data) {
+    this.data = data;
+  }
 
-module.exports = mongoose.model('AuditLog', AuditLogSchema);
+  async save() {
+    return AuditStore.create(this.data);
+  }
+
+  static find() {
+    return AuditStore.find();
+  }
+}
+
+module.exports = AuditLog;

@@ -63,7 +63,7 @@ router.delete('/', authMiddleware, async (req, res) => {
   alerts.length = 0;
 
   if (process.env.NODE_ENV !== 'test') {
-    await new AuditLog({
+    new AuditLog({
       userEmail: req.user.email,
       action: 'Clear All Alerts',
       target: 'Alerts System',
